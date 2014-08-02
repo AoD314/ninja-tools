@@ -21,7 +21,7 @@ p_text create_text(uint_t x, uint_t y, const string txt) {
     return t;
 }
 
-p_svg svg_open(const string name)
+p_svg svg_open(const string name, uint_t W, uint_t H)
 {
     FILE * f = fopen(name, "w");
     if (f == NULL)
@@ -31,8 +31,8 @@ p_svg svg_open(const string name)
     s->f = f;
     fprintf(f, "<?xml version=\"1.0\" standalone=\"no\"?>\n");
     fprintf(f, "<!DOCTYPE svg PUBLIC \"-//W3C//DTD SVG 1.1//EN\"\n\"http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd\">\n");
-    fprintf(f, "<svg width=\"256\" height=\"64\" version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\">\n");
-    fprintf(f, "<g fill=\"white\" stroke=\"black\" stroke-width=\"1\" font-family=\"helvetica\" font-size=\"4\">\n");
+    fprintf(f, "<svg width=\"%llu\" height=\"%llu\" version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\">\n", W, H);
+    fprintf(f, "<g fill=\"white\" stroke=\"black\" stroke-width=\"1\" font-family=\"courier\" font-size=\"2\">\n");
     return s;
 }
 
@@ -50,4 +50,19 @@ void svg_add_rect(p_svg s, p_rect r) {
 
 void svg_add_text(p_svg s, p_text t) {
     fprintf(s->f, "<text x=\"%llu\" y=\"%llu\"  fill=\"red\">%s</text>\n", t->x, t->y, t->t);
+}
+
+void svg_add_line(p_svg s, p_line l)
+{
+    fprintf(s->f, "<line x1=\"%llu\" y1=\"%llu\" x2=\"%llu\" y2=\"%llu\" />\n", l->x0, l->y0, l->x1, l->y1);
+}
+
+
+p_line create_line(uint_t x0, uint_t y0, uint_t x1, uint_t y1) {
+    p_line l = (p_line)malloc(1 * sizeof(struct line));
+    l->x0 = x0;
+    l->y0 = y0;
+    l->x1 = x1;
+    l->y1 = y1;
+    return l;
 }
