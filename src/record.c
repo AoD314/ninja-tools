@@ -6,10 +6,10 @@
 p_record create_record(uint_t s, uint_t e, const string name) {
 
     p_record rec = (p_record) malloc( 1 * sizeof(struct record));
-    rec->last = NULL;
-    rec->next = NULL;
+    rec->record_back = NULL;
+    rec->record_next = NULL;
 
-    rec->start = s;
+    rec->begin = s;
     rec->end = e;
 
     size_t len = strlen(name);
@@ -17,4 +17,11 @@ p_record create_record(uint_t s, uint_t e, const string name) {
     strcpy(rec->filename, name);
 
     return rec;
+}
+
+
+void delete_record(p_record r) {
+
+    free(r->filename);
+    free(r);
 }

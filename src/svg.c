@@ -31,8 +31,8 @@ p_svg svg_open(const string name)
     s->f = f;
     fprintf(f, "<?xml version=\"1.0\" standalone=\"no\"?>\n");
     fprintf(f, "<!DOCTYPE svg PUBLIC \"-//W3C//DTD SVG 1.1//EN\"\n\"http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd\">\n");
-    fprintf(f, "<svg width=\"4096\" height=\"1024\" version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\">\n");
-    fprintf(f, "<g fill=\"white\" stroke=\"black\" stroke-width=\"1\" font-family=\"helvetica\" font-size=\"6\">\n");
+    fprintf(f, "<svg width=\"256\" height=\"64\" version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\">\n");
+    fprintf(f, "<g fill=\"white\" stroke=\"black\" stroke-width=\"1\" font-family=\"helvetica\" font-size=\"4\">\n");
     return s;
 }
 

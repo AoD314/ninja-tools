@@ -24,13 +24,15 @@ p_record parse_ninja_log(const string path_to_ninja_log) {
         }
 
         p_record r = create_record(start, end, buffer);
-        point->next = r;
+        point->record_next = r;
+        r->record_back = point;
         point = r;
     }
 
     fclose(f);
 
-    p_record result = begin->next;
+    p_record result = begin->record_next;
+    result->record_back = NULL;
 
     free(begin);
     free(buffer);

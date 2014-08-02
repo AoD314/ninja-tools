@@ -3,98 +3,15 @@
 #include <stdlib.h>
 #include <string.h>
 
-//#define max(x, y) ((x) > (y)) ? (x) : (y)
-
 #include "record.h"
 #include "parse.h"
 #include "svg.h"
-
-//struct node {
-//  struct node *next;
-//  struct node *last;
-
-//  struct record *begin;
-//  struct record *end;
-//};
-
-//struct table {
-//  struct node *begin;
-//  struct node *end;
-//};
-
-//struct record * get_min_start(struct record * list) {
-//    struct record * list_c = list;
-//    uint32_t min_start = 1 << 31;
-//    struct record * min = NULL;
-//    struct record * back = NULL;
-
-//    while (list_c != NULL) {
-//        if (list_c->start < min_start) {
-//            min_start = list_c->start;
-//            min = list_c;
-//        }
-//        else
-//            back = list_c;
-
-//        list_c = list_c->next;
-//    }
-
-//    return min;
-//}
-
-//void table_add_record(struct table *table, struct record *rec, int index) {
-//  if (index < 0) {
-//    struct node *nn = (struct node *)malloc(1 * sizeof(struct node));
-//    struct node *last = table->end;
-//    last->next = nn;
-//    last->last = NULL;
-//    last->begin = rec;
-//    last->end = rec;
-//  } else {
-//    struct node *curr = table->begin;
-//    int i = 0;
-//    while (i++ < index) {
-//      curr = curr->next;
-//    }
-//    struct record *curr_rec = curr->end;
-//    curr_rec->next = rec;
-//    curr_rec->last = NULL;
-//    rec->next = NULL;
-//    rec->last = NULL;
-//  }
-//}
-
-//int table_get_best_pos(struct table * table, struct record * rec)
-//{
-//    int best = -1;
-//    int index = 0;
-//    int best_min = 1 << 30;
-//    struct node * curr = table->begin;
-//    while (curr->next != NULL) {
-//        struct record * r = curr->end;
-//        if ((rec->start > r->end) && (abs(r->end - rec->start) < best_min))
-//        {
-//            best = index;
-//            best_min = abs(r->end - rec->start);
-//        }
-//        curr = curr->next;
-//        index++;
-//    }
-//    return best;
-//}
-
-//void get_max_rect(const struct record **recs, const uint32_t N, uint32_t *W,
-//                  uint32_t *H) {
-//  *W = 0;
-//  *H = 25 * 314;
-//  for (uint32_t i = 0; i < N; i++) {
-//    *W = max(*W, recs[i]->end);
-//  }
-//}
+#include "table.h"
 
 int main() {
+//    sleep(1);
     char path_to_ninja_log[] = "/tmp/.ninja_log";
-    char path_to_svg_file[] = "/tmp/out.svg";
+    char path_to_svg_file [] = "/tmp/output.svg";
 
     p_svg svg_file = svg_open(path_to_svg_file);
     if (svg_file == NULL) {
@@ -109,19 +26,39 @@ int main() {
     string buff = (string)malloc(65536);
     p_record iter = list;
     while (iter != NULL) {
-        if ((iter->end - iter->start) > max_len)
+        if ((iter->end - iter->begin) > max_len)
         {
-            max_len = iter->end - iter->start;
+            max_len = iter->end - iter->begin;
             strcpy(buff, iter->filename);
         }
-        iter = iter->next;
+        iter = iter->record_next;
     }
-
     printf("%s : %llu ms\n", buff, max_len);
     free(buff);
 
-    svg_add_rect(svg_file, create_rect(0, 0, 200, 50));
-    svg_add_text(svg_file, create_text(25, 25, "Hello, World !!!!!"));
+    p_table t = create_table(&list);
+
+    p_node n = t->begin;
+    p_record r = n->record_begin;
+    int thread = 0;
+
+    while (r != NULL)
+    {
+        while (r != NULL)
+        {
+            svg_add_rect(svg_file, create_rect(r->begin, (thread) * 40 , r->end - r->begin, 40));
+            svg_add_text(svg_file, create_text(r->begin, (thread + 1) * 40 - 20, r->filename));
+//            printf("start:%5llu    end:%5llu    len:%5llu    file:%s\n", r->begin, r->end, r->end - r->begin, r->filename);
+            r = r->record_next;
+        }
+        n = n->node_next;
+        if (n == NULL) {
+            r = NULL;
+        } else {
+            r = n->record_begin;
+        }
+        thread ++;
+    }
 
     svg_close(svg_file);
 

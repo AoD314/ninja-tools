@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 2.8.12)
 
 project(ninja-build-visualize C)
 
-add_compile_options(-Wall -Wextra -Wpedantic -Wformat=2 -std=c11 -O0 -g3)
+add_compile_options(-Wall -Wextra -Wpedantic -Wformat=2 -std=c11 -O0 -g3 -ggdb3)
 
 file(GLOB srcs "src/*.c")
 file(GLOB hdrs "include/*.h")
