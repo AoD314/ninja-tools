@@ -96,7 +96,6 @@ int main() {
         sprintf(short_name, "%d", i);
         svg_add_line(svg_file, create_line(i,     (thread + 1) * height, i, 0));
         svg_add_text(svg_file, create_text(i + 1, (thread + 1) * height - height/2, short_name));
-
     }
 
     svg_close(svg_file);
