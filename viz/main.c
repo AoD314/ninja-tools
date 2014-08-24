@@ -7,6 +7,8 @@
 #include "project_types.h"
 #include "record.h"
 #include "config.h"
+#include "table.h"
+#include "block.h"
 
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>
@@ -90,7 +92,51 @@ int main(int argc, char ** argv) {
     }
 
     p_record list = parse_ninja_log(path_to_ninja_log);
-    (void *)list;
+
+    p_table t = create_table(&list);
+
+    p_node n = t->begin;
+
+    uint_t amount = 0;
+    while (n != NULL) {
+        amount += n->amount;
+        n = n->node_next;
+    }
+    n = t->begin;
+
+    printf("amount = %d\n", amount);
+
+    p_block * blocks = (p_block) malloc (amount * sizeof(struct block));
+
+    p_record r = n->record_begin;
+
+    int thread = 0;
+    uint_t index = 0;
+
+    while (r != NULL)
+    {
+        while (r != NULL)
+        {
+            // use r->begin, r->end;
+
+            blocks[index]->x = r->begin;
+            blocks[index]->w = r->end - r->begin;
+            blocks[index]->y = 35 * thread;
+            blocks[index]->h = 30;
+            blocks[index]->txt = r->filename;
+
+            r = r->record_next;
+            index++;
+        }
+        n = n->node_next;
+        if (n == NULL) {
+            r = NULL;
+        } else {
+            r = n->record_begin;
+        }
+        thread ++;
+    }
+
 
     SDL_Window * window = NULL;
     window = SDL_CreateWindow("Hello World!", 0, 0, cfg->screen_w, cfg->screen_h, SDL_WINDOW_OPENGL);
@@ -108,13 +154,13 @@ int main(int argc, char ** argv) {
 
     SDL_Event e;
 
-    SDL_Rect r;
-    r.x = 10;
-    r.y = 400;
-    r.w = 1500;
-    r.h = 20;
+    SDL_Rect rect;
+    rect.x = 10;
+    rect.y = 400;
+    rect.w = 1500;
+    rect.h = 20;
 
-    SDL_Rect r2 = r;
+    SDL_Rect r2 = rect;
     r2.y = 500;
 
     if( TTF_Init() == -1 )
@@ -122,8 +168,8 @@ int main(int argc, char ** argv) {
         printf( "SDL_ttf could not initialize! SDL_ttf Error: %s\n", TTF_GetError());
     }
 
-    char txt[] = "/HOME/SSD/CMakeFiles/qwertyuiopasdfghjklzxcvbnm/?!@#$%^&*+_=26354183134112351513242=_example_command_line_parser{_}(0123456789).cpp.o";
-    char txt2[] = "/HOME/SSD/CMake";
+    char txt2[] = "/HOME/SSD/CMakeFiles/qwertyuiopasdfghjklzxcvbnm/?!@#$%^&*+_=26354183134112351513242=_example_command_line_parser{_}(0123456789).cpp.o";
+//    char txt2[] = "/HOME/SSD/CMake";
 
     size_t ls = strlen(txt2);
 
@@ -137,7 +183,7 @@ int main(int argc, char ** argv) {
         SDL_SetRenderDrawColor(render, 255, 255, 255, 255);
 
         for (int i = 0; i < 25; i++) {
-            r.y = i * 35;
+            rect.y = i * 35;
 
             for (int j = 0; j < 64; j++) {
                 int rnd = rand() % ls;
@@ -145,7 +191,7 @@ int main(int argc, char ** argv) {
                 txt2[rnd] = let + '0';
             }
 
-            SDL_RenderTextAtPos(render, r, txt2);
+            SDL_RenderTextAtPos(render, rect, txt2);
         }
 
 

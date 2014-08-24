@@ -8,19 +8,49 @@ add_compile_options(-std=c11)
 # DEBUG
 add_compile_options(-Wall -Wextra -Wpedantic -Wformat=2 -g3 -ggdb3 -O0)
 
+#add_compile_options(-fcolor-diagnostics) # for clang
+
 # RELEASE
 #add_compile_options(-O3)
 
 # find deps libs
 find_package(GTest REQUIRED)
 
-INCLUDE(FindPkgConfig)
-PKG_SEARCH_MODULE(SDL2 REQUIRED)
-INCLUDE_DIRECTORIES(${SDL2_INCLUDE_DIRS})
+# find SDL2
+FIND_PATH(SDL2_INCLUDE_DIR SDL.h
+HINTS
+$ENV{SDL2DIR}
+PATH_SUFFIXES
+include/SDL2 include
+PATHS
+/usr/local/include/SDL2
+/usr/include/SDL2
+/opt
+)
+
+IF(NOT APPLE)
+    FIND_PACKAGE(Threads)
+ENDIF(NOT APPLE)
+
+FIND_LIBRARY(SDL2_LIBRARY
+NAMES SDL2
+HINTS
+$ENV{SDL2DIR}
+PATH_SUFFIXES lib64 lib
+PATHS
+/opt/local
+)
+
+INCLUDE(FindPackageHandleStandardArgs)
+
+FIND_PACKAGE_HANDLE_STANDARD_ARGS(SDL2 REQUIRED_VARS SDL2_LIBRARY SDL2_INCLUDE_DIR)
+
+SET(SDL2_FOUND "YES")
 
 ###############################################################################
 
 include_directories("parser/include")
+include_directories("table/include")
 
 set(src_parse_lib
     "parser/include/project_types.h"
@@ -35,9 +65,15 @@ set(src_stat_app
 )
 
 set(src_viz_app
+    "table/include/node.h"
+    "table/include/table.h"
+    "table/src/node.c"
+    "table/src/table.c"
     "viz/main.c"
     "viz/config.c"
     "viz/config.h"
+    "viz/block.c"
+    "viz/block.h"
 )
 
 # LIBS
