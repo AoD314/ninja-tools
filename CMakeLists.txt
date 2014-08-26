@@ -86,7 +86,7 @@ target_link_libraries(ninja-stat ninja_parse_lib)
 
 # NINJA-VIZ
 add_executable(ninja-viz ${src_viz_app})
-target_link_libraries(ninja-viz ninja_parse_lib ${SDL2_LIBRARIES} -lSDL2_ttf)
+target_link_libraries(ninja-viz ninja_parse_lib ${SDL2_LIBRARY} -lSDL2_ttf)
 
 
 # TESTS
