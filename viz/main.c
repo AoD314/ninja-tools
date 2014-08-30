@@ -115,6 +115,7 @@ int main(int argc, char ** argv) {
 
     int thread = 1;
     uint_t index = 0;
+    uint_t max_width = 0;
 
     while (r != NULL)
     {
@@ -127,6 +128,9 @@ int main(int argc, char ** argv) {
             blocks[index].y = 50 * thread;
             blocks[index].h = 30;
             blocks[index].txt = r->filename;
+
+            if (r->end > max_width)
+                max_width = r->end;
 
             r = r->record_next;
             index++;
@@ -162,6 +166,9 @@ int main(int argc, char ** argv) {
     }
 
     long long int shift_x = 0;
+    long long int shift_y = 0;
+
+    float scale = 1.0;
 
     while(e.type != SDL_QUIT) {
 
@@ -180,6 +187,28 @@ int main(int argc, char ** argv) {
                         if (shift_x > max_shift)
                             shift_x = max_shift;
                         break;
+                    case SDLK_HOME:
+                        shift_x = 0;
+                        break;
+                    case SDLK_END:
+                        shift_x = (max_width * scale) - cfg->screen_w / 2;
+                        break;
+
+                    case SDLK_UP:
+                        shift_y += 10;
+                        break;
+                    case SDLK_DOWN:
+                        shift_y -= 10;
+                        break;
+
+                    case SDLK_PLUS:
+                        scale *= 2;
+                        break;
+
+                    case SDLK_MINUS:
+                        scale /= 2;
+                        break;
+
                     default:
                         break;
                 }
@@ -187,20 +216,18 @@ int main(int argc, char ** argv) {
                 break;
         }
 
-
         SDL_SetRenderDrawColor(render, 0, 0, 0, 255);
         SDL_RenderClear(render);
         SDL_SetRenderDrawColor(render, 255, 255, 255, 255);
 
         for (uint_t i = 0; i < amount; i++) {
             SDL_Rect rect;
-            rect.x = blocks[i].x - shift_x;
-            rect.y = blocks[i].y;
-            rect.w = blocks[i].w;
+            rect.x = (blocks[i].x * scale) - shift_x;
+            rect.y = (blocks[i].y) + shift_y;
+            rect.w = blocks[i].w * scale;
             rect.h = blocks[i].h;
 
             SDL_RenderTextAtPos(render, rect, blocks[i].txt);
-
         }
 
         SDL_RenderPresent(render);
