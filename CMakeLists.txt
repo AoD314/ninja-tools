@@ -3,12 +3,12 @@ cmake_minimum_required(VERSION 2.8.12)
 project(ninja-tools)
 
 # generic
-add_compile_options(-std=c11)
+#add_compile_options(-std=c++11)
 
 # DEBUG
 add_compile_options(-Wall -Wextra -Wpedantic -Wformat=2 -g3 -ggdb3 -O0)
 
-#add_compile_options(-fcolor-diagnostics) # for clang
+add_compile_options(-fcolor-diagnostics) # for clang
 
 # RELEASE
 #add_compile_options(-O3)

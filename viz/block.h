@@ -5,10 +5,10 @@
 #include "project_types.h"
 
 struct block {
-    int x;
-    int y;
-    int w;
-    int h;
+    uint_t x;
+    uint_t y;
+    uint_t w;
+    uint_t h;
     string txt;
 };
 

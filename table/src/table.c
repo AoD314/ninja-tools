@@ -88,10 +88,12 @@ void table_add_record(p_table * table, p_record rec, int index) {
         }
         p_record last_rec = curr_node->record_end;
 
-        last_rec->record_next = rec;
-        rec->record_next = NULL;
-        rec->record_back = last_rec;
-        curr_node->record_end = rec;
+        p_record nrec = create_record(rec->begin, rec->end, rec->filename);
+
+        last_rec->record_next = nrec;
+        nrec->record_next = NULL;
+        nrec->record_back = last_rec;
+        curr_node->record_end = nrec;
         curr_node->amount++;
     }
 }
@@ -103,7 +105,10 @@ p_table create_table(p_record * list) {
 
     p_record min_record = get_min_start_value(list);
     while (min_record != NULL) {
-        table_add_record(&t, min_record, table_get_best_pos(&t, min_record));
+//        printf("min(%p): %llu-%llu -> %s\n", (void *) min_record, min_record->begin, min_record->end, min_record->filename);
+        int pos = table_get_best_pos(&t, min_record);
+//        printf("find pos: %d\n", pos);
+        table_add_record(&t, min_record, pos);
         min_record = get_min_start_value(list);
     }
 

@@ -9,7 +9,7 @@ p_config create_config()
 
     cfg->scale_x = 1;
     cfg->scale_y = 1;
-    cfg->font_size = 16;
+    cfg->font_size = 14;
     cfg->path_to_font = PATH_TO_FONT;
     cfg->screen_w = 1600;
     cfg->screen_h = 900;
