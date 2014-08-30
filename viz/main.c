@@ -169,6 +169,7 @@ int main(int argc, char ** argv) {
     long long int shift_y = 0;
 
     float scale = 1.0;
+    int time = 0;
 
     while(e.type != SDL_QUIT) {
 
@@ -201,12 +202,20 @@ int main(int argc, char ** argv) {
                         shift_y -= 10;
                         break;
 
-                    case SDLK_PLUS:
+                    case SDLK_0:
                         scale *= 2;
                         break;
 
-                    case SDLK_MINUS:
+                    case SDLK_9:
                         scale /= 2;
+                        break;
+
+                    case SDLK_EQUALS:
+                        scale = 1.0;
+                        break;
+
+                    case SDLK_t:
+                        time = (time + 1) % 2;
                         break;
 
                     default:
@@ -227,7 +236,15 @@ int main(int argc, char ** argv) {
             rect.w = blocks[i].w * scale;
             rect.h = blocks[i].h;
 
-            SDL_RenderTextAtPos(render, rect, blocks[i].txt);
+            char msg[512];
+            sprintf(msg, "%d", blocks[i].w);
+
+            string text = blocks[i].txt;
+            if (time) {
+                text = msg;
+            }
+
+            SDL_RenderTextAtPos(render, rect, text);
         }
 
         SDL_RenderPresent(render);
